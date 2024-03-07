@@ -1,19 +1,21 @@
+let works;
+
 // ETAPE 1.1 - Récupération des données depuis l'API
 const recupererDonnees = async () => {
     try {
-      // Fait une requête fetch pour obtenir les données du back-end
-      const reponse = await fetch("http://localhost:5678/api/works");
-      
-      // Convertit la réponse en format JSON
-      const donneesTravaux = await reponse.json();
-  
-      // Appelle la fonction pour afficher les travaux dans la galerie
-      afficherTravaux(donneesTravaux);
+        // Fait une requête fetch pour obtenir les données du back-end
+        const reponse = await fetch("http://localhost:5678/api/works");
+
+        // Convertit la réponse en format JSON
+        works = await reponse.json();
+
+        // Appelle la fonction pour afficher les travaux dans la galerie
+        afficherTravaux(works);
     } catch (erreur) {
-      // Gère les erreurs en affichant un message dans la console
-      console.error("Une erreur s'est produite lors de la récupération des données :", erreur);
+        // Gère les erreurs en affichant un message dans la console
+        console.error("Une erreur s'est produite lors de la récupération des données :", erreur);
     }
-  };
+};
   
   // Fonction pour afficher les travaux dans la galerie
   const afficherTravaux = (travaux) => {
@@ -49,9 +51,56 @@ const recupererDonnees = async () => {
   
   // Appelle la fonction recupererDonnees pour récupérer et afficher les travaux
   recupererDonnees();
-  
- 
- 
 
-  
 
+//Étape 1.2 - Réalisation du filtre des travaux :
+
+// Récupération des categories depuis l'API
+const reponseCategories = await fetch("http://localhost:5678/api/categories");
+const categories = await reponseCategories.json();
+
+
+// Création des filtres
+let filters = []
+filters.push("Tous")
+categories.forEach(element => {
+  filters.push(element.name)
+});
+console.log(filters);
+
+// La fonction generateFilters est responsable de la création des filtres HTML pour les catégories de travaux
+function generateFilters(filters) {
+  for (let i = 0; i < filters.length; i++) {
+    const categorie = filters[i];
+    // Récupération de l'élément du DOM pour afficher les travaux
+    const sectionFilters = document.querySelector('.filters');
+    // Création d’une div dédiée à chaque catégorie
+    const filterCategory = document.createElement("div");
+    filterCategory.dataset.id = filters[i].id;
+    // Parti HTML 
+    filterCategory.innerHTML = categorie;
+    // Parti CSS
+    filterCategory.classList.add("filter");
+    // On ajoute le "nouveau filtre" dans le filtre du DOM
+    sectionFilters.appendChild(filterCategory);
+  }
+}
+generateFilters(filters);
+
+// Bouton cliquable
+const buttonCategories = document.querySelectorAll(".filter");
+
+buttonCategories.forEach(buttonCategory => {
+    buttonCategory.addEventListener("click", function () {
+        const selectedCategory = buttonCategory.innerText;
+        
+        // Vérifie si la catégorie active est "Tous"
+        if (selectedCategory === "Tous") {
+            afficherTravaux(works);
+        } else {
+            // Filtre en fonction de la categorie active
+            const filteredWorks = works.filter(work => work.category.name === selectedCategory);
+            afficherTravaux(filteredWorks);
+        }
+    });
+});
