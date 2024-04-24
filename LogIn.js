@@ -32,7 +32,6 @@ document.addEventListener("DOMContentLoaded", function() {
                       
             
         })
-        
         .catch(error => {
             // Gérer les erreurs
             console.error("Erreur lors de la connexion:", error.message);
