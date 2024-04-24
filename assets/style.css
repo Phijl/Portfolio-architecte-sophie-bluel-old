@@ -287,6 +287,14 @@ footer nav ul {
     cursor: pointer;
 }
 
+#loginButton a {
+    color: black;
+    text-decoration: none; /* Supprimer le soulignement du texte */
+    
+}
+
+
+
 footer {
     position: fixed;
     bottom: 0;
