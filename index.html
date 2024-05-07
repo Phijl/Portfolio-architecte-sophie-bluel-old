@@ -13,6 +13,18 @@
 	<script type="module" src="script.js"></script> 
 	<script type="module" src="modal.js"></script><!-- Ajout du fichier en JavaScript-->
 </head>
+<!-- Fenêtre modale -->
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h4>Galerie Photo</h4>
+        <div class="thumbnails">
+            <!-- Conteneur pour afficher les miniatures des travaux -->
+        </div>
+        <hr>
+        <button class="addPhotoBtn" id="addPhotoBtn">Ajouter une photo</button>
+    </div>
+</div>
 <body>
 <header>
 		<a href="index.html">
@@ -40,23 +52,14 @@
 		</article>
 	</section>
 	<section id="portfolio">
-		<h2>Mes Projets
+		<h2>Mes Projets</h2> 
 
 <!-- Bouton "Modifier" à côté du titre du projet -->
 <button id="openModalBtn" class="openModalBtn"><img class="iconemodif" src="assets\icons\modif.png"> modifier</button>
 
-<!-- Fenêtre modale -->
-<div id="modal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <h4>Galerie Photo</h4>
-        <div class="thumbnails">
-            <!-- Conteneur pour afficher les miniatures des travaux -->
-        </div>
-        <hr>
-        <button class="addPhotoBtn" id="addPhotoBtn">Ajouter une photo</button>
-    </div>
-</div></h2> 
+
+
+
 
 
 		<div class="filters">

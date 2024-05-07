@@ -1,4 +1,3 @@
-let work
 // Fonction pour supprimer un travail
 const supprimerTravail = async (id) => {
     try {
@@ -168,24 +167,30 @@ const ouvrirAjouterPhotoModal = () => {
     // Modifier le contenu du modal pour afficher le formulaire d'ajout de photo
     const contenuModal = modal.querySelector(".modal-content");
     contenuModal.innerHTML = `
+    <div class="modal-content">
+    <span class="close">&times;</span>
     <div><img id="arrow" class="arrow" src="assets/icons/fleche.png" alt="arrow"></div>
-        <span class="close">&times;</span>
-        <h4>Ajouter une photo</h4>
+    <h4>Ajouter une photo</h4>
+    <form id="ajouterPhotoForm">
         <div class="upload-container">
-            <div class="image-upload">
-                <label for="image-input" class="image-label">
-                    <img src="assets/icons/image.png" alt="Image preview" id="image-preview">
-                    <div class="overlay">
-                        <button class="photo" id="photo">+ Ajouter photo</button>
-                    </div>
-                    <p class="modalp">jpg, png. Taille maximale : 4 Mo.</p>
-                </label>
-                <input type="file" id="image-input" accept="image/*" style="display: none;">
-            </div>
-            </div>
+        <div class="image-upload">
+    <img src="assets/icons/image.png" alt="Image preview">
+    <label for="image-input" class="image-label" title="+ Ajouter une photo">
+        <button class="photo" id="add-photo-button">+ Ajouter photo</button>
+    </label>
+    <input type="file" id="image-input" accept="image/*" style="display: none;">
+    <p class="modalp">jpg, png. Taille maximale : 4 Mo.</p>
+</div>  
+        </div>
         <button id="valider">Valider</button>
-    `;
+    </form>
+</div>
 
+    `;
+    document.getElementById('add-photo-button').addEventListener('click', function() {
+        document.getElementById('image-input').click();
+    });
+    
     // Afficher le modal
     modal.style.display = "block";
 
@@ -209,12 +214,15 @@ const ouvrirAjouterPhotoModal = () => {
         modal.style.display = "none";
     });
 
+    console.log(ouvrirAjouterPhotoModal);
+    
     // Gérer la soumission du formulaire d'ajout de photo
-    const formulaireAjoutPhoto = contenuModal.querySelector("#ajouterPhotoForm");
-    formulaireAjoutPhoto.addEventListener("submit", (event) => {
-        event.preventDefault();
-        // Code pour traiter l'ajout de la photo ici
-    });
+const formulaireAjoutPhoto = contenuModal.querySelector("#ajouterPhotoForm");
+formulaireAjoutPhoto.addEventListener("submit", (event) => {
+    event.preventDefault();
+    // Code pour traiter l'ajout de la photo ici
+});
+
 
     // Vérifier si l'élément de flèche existe avant d'ajouter l'événement
     const backArrow = contenuModal.querySelector(".arrow");
@@ -223,7 +231,7 @@ const ouvrirAjouterPhotoModal = () => {
         const retourArriereDansModal = () => {
             // Fermer le modal actuel
             modal.style.display = "none";
-
+console.log(modal.style.display);
             // Réafficher les travaux dans le modal
             recupererTravauxDepuisBackend();
         };
