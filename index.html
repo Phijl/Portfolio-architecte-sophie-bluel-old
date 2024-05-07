@@ -10,7 +10,8 @@
 	<meta name="description" content="">
 	<link rel="stylesheet" href="./assets/style.css">
 	<script type="module" src="LogIn.js"></script>
-	<script type="module" src="script.js"></script> <!-- Ajout du fichier en JavaScript-->
+	<script type="module" src="script.js"></script> 
+	<script type="module" src="modal.js"></script><!-- Ajout du fichier en JavaScript-->
 </head>
 <body>
 <header>
@@ -39,7 +40,25 @@
 		</article>
 	</section>
 	<section id="portfolio">
-		<h2>Mes Projets</h2>
+		<h2>Mes Projets
+
+<!-- Bouton "Modifier" à côté du titre du projet -->
+<button id="openModalBtn" class="openModalBtn"><img class="iconemodif" src="assets\icons\modif.png"> modifier</button>
+
+<!-- Fenêtre modale -->
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Galerie Photo</h2>
+        <div class="thumbnails">
+            <!-- Conteneur pour afficher les miniatures des travaux -->
+        </div>
+        <hr>
+        <button class="addPhotoBtn" id="addPhotoBtn">Ajouter une photo</button>
+    </div>
+</div></h2> 
+
+
 		<div class="filters">
 		</div>
 		<div class="gallery">
