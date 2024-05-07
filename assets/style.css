@@ -374,3 +374,58 @@ a {
     border-radius: 60px;
     border: none;
 }
+/* Style de la boîte modale de loggin*/
+.modal {
+	display: none; /* Masquer initialement */
+	position: fixed;
+	z-index: 1;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	background-color: rgba(0,0,0,0.4);
+  }
+  
+  /* Contenu de la boîte modale */
+  .modal-content {
+	background-color: #fefefe;
+	margin: 15% auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 80%;
+  }
+  
+  /* Bouton de fermeture */
+  .close {
+	color: #aaa;
+	float: right;
+	font-size: 28px;
+	font-weight: bold;
+  }
+  
+  .close:hover,
+  .close:focus {
+	color: black;
+	text-decoration: none;
+	cursor: pointer;
+  }
+  
+  /* Style pour la croix de suppression */
+.close-icon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: rgb(0, 0, 0); 
+	color: white;
+    padding: 1px;
+    cursor: pointer;
+}
+
+
+/* Style pour le conteneur de l'image et de la croix */
+.image-container {
+    position: relative;
+    display: inline-block;
+    overflow: hidden; /* Cache la partie de la croix qui dépasse du conteneur */
+}

@@ -34,7 +34,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 // Gérer les erreurs
                 console.error("Erreur lors de la connexion:", error.message);
                 // Afficher un message d'erreur à l'utilisateur
-                alert("Les informations utilisateur / mot de passe ne sont pas correctes.");
+                    const errorMessageElement = document.getElementById("error-message");
+    errorMessageElement.textContent = "Les informations utilisateur/mot de passe ne sont pas correctes.";
+
             });
         });
     }
