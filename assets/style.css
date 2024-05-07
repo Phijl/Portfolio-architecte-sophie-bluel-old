@@ -95,6 +95,15 @@ h3{
 	color: #3D3D3D;
 
 }
+h4{
+font-family: Work Sans;
+font-size: 26px;
+font-weight: 400;
+line-height: 30.5px;
+text-align: center;
+margin-bottom: 20px;
+}
+
 
 nav ul {
 	display: flex;
@@ -428,4 +437,42 @@ a {
     position: relative;
     display: inline-block;
     overflow: hidden; /* Cache la partie de la croix qui dépasse du conteneur */
+}
+.image-upload{
+	background-color:#E8F1F6;
+	margin: 100px;
+	padding-bottom: 20px;
+
+}
+
+.photo{
+	width: 173px;
+	height: 36px;
+	top: 881px;
+	left: 633px;
+	gap: 0px;
+	border-radius: 50px 50px 50px 50px;
+	opacity: 0px;
+	font-family: Work Sans;
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 16.42px;
+	text-align: center;
+	color: #306685;
+	background-color:  #CBD6DC;
+	border: transparent
+	;
+}
+.modalp{
+font-family: Work Sans;
+font-size: 10px;
+font-weight: 400;
+line-height: 11.73px;
+text-align: center;
+
+}
+.arrow{
+	display: flex;
+	width: 21px;
+	height: 21px;
 }

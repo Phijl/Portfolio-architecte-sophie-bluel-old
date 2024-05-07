@@ -153,3 +153,91 @@ document.addEventListener("DOMContentLoaded", async function() {
     // Récupérer les travaux depuis le backend et les afficher dans le modal
     await recupererTravauxDepuisBackend();
 });
+
+
+
+//Étape 3.3 : Envoi d’un nouveau projet au back-end via le formulaire de la modale
+// Fonction pour ouvrir le modal d'ajout de photo
+const ouvrirAjouterPhotoModal = () => {
+    // Récupérer la fenêtre modale
+    const modal = document.getElementById("modal");
+
+    // Modifier le titre du modal
+    modal.querySelector("h4").textContent = "Ajouter une photo";
+
+    // Modifier le contenu du modal pour afficher le formulaire d'ajout de photo
+    const contenuModal = modal.querySelector(".modal-content");
+    contenuModal.innerHTML = `
+    <div><img id="arrow" class="arrow" src="assets/icons/fleche.png" alt="arrow"></div>
+        <span class="close">&times;</span>
+        <h4>Ajouter une photo</h4>
+        <div class="upload-container">
+            <div class="image-upload">
+                <label for="image-input" class="image-label">
+                    <img src="assets/icons/image.png" alt="Image preview" id="image-preview">
+                    <div class="overlay">
+                        <button class="photo" id="photo">+ Ajouter photo</button>
+                    </div>
+                    <p class="modalp">jpg, png. Taille maximale : 4 Mo.</p>
+                </label>
+                <input type="file" id="image-input" accept="image/*" style="display: none;">
+            </div>
+            </div>
+        <button id="valider">Valider</button>
+    `;
+
+    // Afficher le modal
+    modal.style.display = "block";
+
+    // Gérer la sélection d'une image
+    const imageInput = contenuModal.querySelector("#image-input");
+    const imagePreview = contenuModal.querySelector("#image-preview");
+    imageInput.addEventListener("change", () => {
+        const file = imageInput.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imagePreview.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Ajouter un événement de fermeture sur la croix
+    const closeModalBtn = contenuModal.querySelector(".modal .close");
+    closeModalBtn.addEventListener("click", function() {
+        modal.style.display = "none";
+    });
+
+    // Gérer la soumission du formulaire d'ajout de photo
+    const formulaireAjoutPhoto = contenuModal.querySelector("#ajouterPhotoForm");
+    formulaireAjoutPhoto.addEventListener("submit", (event) => {
+        event.preventDefault();
+        // Code pour traiter l'ajout de la photo ici
+    });
+
+    // Vérifier si l'élément de flèche existe avant d'ajouter l'événement
+    const backArrow = contenuModal.querySelector(".arrow");
+    if (backArrow) {
+        // Fonction pour gérer le retour en arrière dans le modal
+        const retourArriereDansModal = () => {
+            // Fermer le modal actuel
+            modal.style.display = "none";
+
+            // Réafficher les travaux dans le modal
+            recupererTravauxDepuisBackend();
+        };
+
+        // Ajouter un événement pour la flèche de retour
+        backArrow.addEventListener("click", retourArriereDansModal);
+    }
+};
+
+// Événement DOMContentLoaded
+document.addEventListener("DOMContentLoaded", async function() {
+    // Récupérer le bouton "Ajouter une photo"
+    const addPhotoBtn = document.getElementById("addPhotoBtn");
+
+    // Ajouter un écouteur d'événement pour ouvrir le modal d'ajout de photo
+    addPhotoBtn.addEventListener("click", ouvrirAjouterPhotoModal);
+});
