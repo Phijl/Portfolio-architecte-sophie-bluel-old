@@ -3,19 +3,35 @@ const supprimerTravail = async (id) => {
     try {
         // Fait une requête fetch pour supprimer le travail avec l'ID spécifié
         const reponse = await fetch(`http://localhost:5678/api/works/${id}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('authToken')}`, // Assurez-vous que le token est inclus si nécessaire
+            }
         });
-        
+
         // Vérifie si la suppression a réussi
         if (reponse.ok) {
-            // Actualise les travaux affichés dans le modal après la suppression
-            await recupererTravauxDepuisBackend();
             console.log("Le travail a été supprimé avec succès.");
+            // Supprimer l'élément du DOM dans le modal
+            const elementTravailModal = document.querySelector(`.work-modal[data-id='${id}']`);
+            if (elementTravailModal) {
+                elementTravailModal.remove();
+            }
+            // Supprimer l'élément du DOM dans la galerie principale
+            supprimerElementGaleriePrincipale(id);
         } else {
-            console.error("Erreur lors de la suppression du travail.");
+            console.error("Erreur lors de la suppression du travail.", reponse.statusText);
         }
     } catch (erreur) {
         console.error("Une erreur s'est produite lors de la suppression du travail :", erreur);
+    }
+};
+
+// Fonction pour supprimer un élément de la galerie principale
+const supprimerElementGaleriePrincipale = (id) => {
+    const elementTravailPrincipal = document.querySelector(`.gallery .work[data-id='${id}']`);
+    if (elementTravailPrincipal) {
+        elementTravailPrincipal.remove();
     }
 };
 
@@ -46,7 +62,7 @@ const afficherTravauxDansModal = (travaux) => {
 
         // Crée un élément img pour afficher l'image du travail
         const elementImage = document.createElement("img");
-        elementImage.src = travail.imageUrl;
+        elementImage.src = elementImage.src = travail.imageUrl;
         elementImage.alt = travail.title;
         elementImage.classList.add("thumbnail-image"); // Ajoute la classe thumbnail-image à l'image
 
@@ -55,39 +71,13 @@ const afficherTravauxDansModal = (travaux) => {
         elementCroix.innerHTML = "&times;"; // Utilise le symbole '×' pour la croix
         elementCroix.classList.add("close-icon"); // Ajoute une classe pour le style CSS
 
-        // Fonction pour afficher une boîte de dialogue personnalisée
-        const afficherBoiteDialogue = (message, callback) => {
-        const boiteDialogue = document.createElement("div");
-        boiteDialogue.classList.add("custom-dialog");
-    
-        const contenu = document.createElement("div");
-        contenu.textContent = message;
-        boiteDialogue.appendChild(contenu);
-    
-        const boutonOui = document.createElement("button");
-        boutonOui.textContent = "Oui";
-        boutonOui.addEventListener("click", () => {
-            callback(true);
-            document.body.removeChild(boiteDialogue);
-        });
-        boiteDialogue.appendChild(boutonOui);
-    
-    const boutonNon = document.createElement("button");
-    boutonNon.textContent = "Non";
-    boutonNon.addEventListener("click", () => {
-        callback(false);
-        document.body.removeChild(boiteDialogue);
-    });
-    boiteDialogue.appendChild(boutonNon);
-    
-    document.body.appendChild(boiteDialogue);
-};
         // Ajoute un événement de clic à la croix pour supprimer le travail
         elementCroix.addEventListener("click", function(event) {
             event.stopPropagation(); // Empêche la propagation du clic à l'élément de travail
             const travailId = travail.id;
             if (travailId) {
-                if (confirm(" ATTENTION : Êtes-vous sûr de vouloir supprimer ce travail ?")) {
+                const confirmation = confirm("ATTENTION : Êtes-vous sûr de vouloir supprimer ce travail ?");
+                if (confirmation) {
                     supprimerTravail(travailId);
                 }
             }
@@ -103,16 +93,19 @@ const afficherTravauxDansModal = (travaux) => {
     });
 };
 
-
 // Fonction pour récupérer les travaux depuis le backend
 const recupererTravauxDepuisBackend = async () => {
     try {
         // Fait une requête fetch pour obtenir les données des travaux depuis le backend
-        const reponse = await fetch("http://localhost:5678/api/works");
-        
+        const reponse = await fetch("http://localhost:5678/api/works", {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('authToken')}`, // Assurez-vous que le token est inclus si nécessaire
+            }
+        });
+
         // Convertit la réponse en format JSON
         const travaux = await reponse.json();
-        
+
         // Appelle la fonction pour afficher les travaux dans le modal
         afficherTravauxDansModal(travaux);
     } catch (erreur) {
@@ -153,9 +146,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     await recupererTravauxDepuisBackend();
 });
 
-
-
-//Étape 3.3 : Envoi d’un nouveau projet au back-end via le formulaire de la modale
+// Étape 3.3 : Envoi d’un nouveau projet au back-end via le formulaire de la modale
 // Fonction pour ouvrir le modal d'ajout de photo
 const ouvrirAjouterPhotoModal = () => {
     // Récupérer la fenêtre modale
@@ -168,40 +159,41 @@ const ouvrirAjouterPhotoModal = () => {
     const contenuModal = modal.querySelector(".modal-content");
     contenuModal.innerHTML = `
     <div class="modal-content">
-    <span class="close">&times;</span>
-    <div><img id="arrow" class="arrow" src="assets/icons/fleche.png" alt="arrow"></div>
-    <h4>Ajouter une photo</h4>
-    <form id="ajouterPhotoForm">
-        <div class="upload-container">
-        <div class="image-upload">
-    <img src="assets/icons/image.png" alt="Image preview">
-    <label for="image-input" class="image-label" title="+ Ajouter une photo">
-        <button class="photo" id="add-photo-button">+ Ajouter photo</button>
-    </label>
-    <input type="file" id="image-input" accept="image/*" style="display: none;">
-    <p class="modalp">jpg, png. Taille maximale : 4 Mo.</p>
-</div>  
-        </div>
-        <button id="valider">Valider</button>
-    </form>
-</div>
-
+        <span class="close">&times;</span>
+        <div><img id="arrow" class="arrow" src="assets/icons/fleche.png" alt="arrow"></div>
+        <h4>Ajouter une photo</h4>
+        <form id="ajouterPhotoForm">
+            <div class="upload-container">
+                <div class="image-upload">
+                    <img src="assets/icons/image.png" alt="Image preview">
+                    <label for="image-input" class="image-label" title="+ Ajouter une photo">
+                        <button class="photo" id="add-photo-button">+ Ajouter photo</button>
+                    </label>
+                    <input type="file" id="image-input" accept="image/*" style="display: none;">
+                    <p class="modalp">jpg, png. Taille maximale : 4 Mo.</p>
+                </div>  
+            </div>
+            <button id="valider">Valider</button>
+        </form>
+    </div>
     `;
+
+    // Ajouter un événement pour le bouton d'ajout de photo
     document.getElementById('add-photo-button').addEventListener('click', function() {
         document.getElementById('image-input').click();
     });
-    
+
     // Afficher le modal
     modal.style.display = "block";
 
     // Gérer la sélection d'une image
     const imageInput = contenuModal.querySelector("#image-input");
-    const imagePreview = contenuModal.querySelector("#image-preview");
     imageInput.addEventListener("change", () => {
         const file = imageInput.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onload = (e) => {
+                const imagePreview = document.querySelector(".image-upload img");
                 imagePreview.src = e.target.result;
             };
             reader.readAsDataURL(file);
@@ -209,20 +201,17 @@ const ouvrirAjouterPhotoModal = () => {
     });
 
     // Ajouter un événement de fermeture sur la croix
-    const closeModalBtn = contenuModal.querySelector(".modal .close");
+    const closeModalBtn = contenuModal.querySelector(".close");
     closeModalBtn.addEventListener("click", function() {
         modal.style.display = "none";
     });
 
-    console.log(ouvrirAjouterPhotoModal);
-    
     // Gérer la soumission du formulaire d'ajout de photo
-const formulaireAjoutPhoto = contenuModal.querySelector("#ajouterPhotoForm");
-formulaireAjoutPhoto.addEventListener("submit", (event) => {
-    event.preventDefault();
-    // Code pour traiter l'ajout de la photo ici
-});
-
+    const formulaireAjoutPhoto = contenuModal.querySelector("#ajouterPhotoForm");
+    formulaireAjoutPhoto.addEventListener("submit", (event) => {
+        event.preventDefault();
+        // Code pour traiter l'ajout de la photo ici
+    });
 
     // Vérifier si l'élément de flèche existe avant d'ajouter l'événement
     const backArrow = contenuModal.querySelector(".arrow");
@@ -231,7 +220,7 @@ formulaireAjoutPhoto.addEventListener("submit", (event) => {
         const retourArriereDansModal = () => {
             // Fermer le modal actuel
             modal.style.display = "none";
-console.log(modal.style.display);
+            console.log(modal.style.display);
             // Réafficher les travaux dans le modal
             recupererTravauxDepuisBackend();
         };
@@ -249,3 +238,4 @@ document.addEventListener("DOMContentLoaded", async function() {
     // Ajouter un écouteur d'événement pour ouvrir le modal d'ajout de photo
     addPhotoBtn.addEventListener("click", ouvrirAjouterPhotoModal);
 });
+

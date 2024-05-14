@@ -142,10 +142,7 @@ li:hover {
 #introduction p {
 	margin-bottom: 0.5em;
 }
-#portfolio h2 {
-	text-align: center;
-	margin-bottom: 1em;
-}
+
 .gallery {
 	width: 100%;
 	display: grid;
@@ -476,3 +473,24 @@ text-align: center;
 	width: 21px;
 	height: 21px;
 }
+
+.portfolio-header {
+    display: flex;
+    align-items: center; /* Aligne verticalement les éléments au centre */
+    justify-content: center; /* Espace entre les éléments pour pousser le bouton à droite */
+	margin-bottom: 10px;
+}
+
+.portfolio-header h2 {
+    margin: 0; /* Supprime la marge par défaut */
+}
+
+.openModalBtn {
+    display: flex;
+    align-items: center; /* Centre le contenu du bouton verticalement */
+    background-color: transparent; /* Fond transparent pour le bouton */
+    border: none; /* Supprime la bordure du bouton */
+    cursor: pointer; /* Change le curseur au survol */
+}
+
+
