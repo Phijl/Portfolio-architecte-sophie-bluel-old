@@ -1,24 +1,45 @@
+// Variable globale pour stocker les travaux
+let works = [];
+
+// Fonction pour fermer tous les modals
+const fermerTousLesModals = () => {
+    const modals = document.querySelectorAll(".modal");
+    modals.forEach(modal => {
+        modal.style.display = "none";
+    });
+};
+
+// Fonction pour afficher le pop-up de confirmation
+const afficherPopupConfirmation = (message) => {
+    const confirmationPopup = document.getElementById('confirmationPopup');
+    confirmationPopup.textContent = message;
+    confirmationPopup.style.display = 'block';
+
+    // Masquer le pop-up après 3 secondes
+    setTimeout(() => {
+        confirmationPopup.style.display = 'none';
+    }, 3000);
+};
+
 // Fonction pour supprimer un travail
 const supprimerTravail = async (id) => {
     try {
-        // Fait une requête fetch pour supprimer le travail avec l'ID spécifié
         const reponse = await fetch(`http://localhost:5678/api/works/${id}`, {
             method: 'DELETE',
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('authToken')}`, // Assurez-vous que le token est inclus si nécessaire
+                'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
             }
         });
 
-        // Vérifie si la suppression a réussi
         if (reponse.ok) {
             console.log("Le travail a été supprimé avec succès.");
-            // Supprimer l'élément du DOM dans le modal
             const elementTravailModal = document.querySelector(`.work-modal[data-id='${id}']`);
             if (elementTravailModal) {
                 elementTravailModal.remove();
             }
-            // Supprimer l'élément du DOM dans la galerie principale
             supprimerElementGaleriePrincipale(id);
+            works = works.filter(travail => travail.id !== id);
+            afficherTravaux(works);
         } else {
             console.error("Erreur lors de la suppression du travail.", reponse.statusText);
         }
@@ -37,43 +58,33 @@ const supprimerElementGaleriePrincipale = (id) => {
 
 // Fonction pour afficher les travaux dans le modal
 const afficherTravauxDansModal = (travaux) => {
-    // Assurez-vous que des travaux sont disponibles
     if (!travaux || travaux.length === 0) {
         console.error("Erreur: Aucune donnée de travaux disponible.");
         return;
     }
 
-    // Sélectionne l'élément HTML représentant la galerie dans le modal
     const galerieModal = document.querySelector(".thumbnails");
-
-    // Supprime le contenu HTML actuel de la galerie dans le modal
     galerieModal.innerHTML = "";
 
-    // Parcourt les travaux et les ajoute dynamiquement à la galerie dans le modal
     travaux.forEach((travail) => {
-        // Crée un élément div pour chaque travail
         const elementTravail = document.createElement("div");
         elementTravail.classList.add("work-modal");
-        elementTravail.dataset.id = travail.id; // Ajoute l'ID du travail comme attribut data-id
+        elementTravail.dataset.id = travail.id;
 
-        // Crée un élément div pour contenir l'image et la croix
         const elementImageContainer = document.createElement("div");
         elementImageContainer.classList.add("image-container");
 
-        // Crée un élément img pour afficher l'image du travail
         const elementImage = document.createElement("img");
-        elementImage.src = elementImage.src = travail.imageUrl;
+        elementImage.src = travail.imageUrl;
         elementImage.alt = travail.title;
-        elementImage.classList.add("thumbnail-image"); // Ajoute la classe thumbnail-image à l'image
+        elementImage.classList.add("thumbnail-image");
 
-        // Crée un élément span pour la croix de suppression
         const elementCroix = document.createElement("span");
-        elementCroix.innerHTML = "&times;"; // Utilise le symbole '×' pour la croix
-        elementCroix.classList.add("close-icon"); // Ajoute une classe pour le style CSS
+        elementCroix.innerHTML = "&times;";
+        elementCroix.classList.add("close-icon");
 
-        // Ajoute un événement de clic à la croix pour supprimer le travail
         elementCroix.addEventListener("click", function(event) {
-            event.stopPropagation(); // Empêche la propagation du clic à l'élément de travail
+            event.stopPropagation();
             const travailId = travail.id;
             if (travailId) {
                 const confirmation = confirm("ATTENTION : Êtes-vous sûr de vouloir supprimer ce travail ?");
@@ -83,12 +94,9 @@ const afficherTravauxDansModal = (travaux) => {
             }
         });
 
-        // Ajoute l'image et la croix à l'élément du travail dans le modal
         elementImageContainer.appendChild(elementImage);
         elementImageContainer.appendChild(elementCroix);
         elementTravail.appendChild(elementImageContainer);
-
-        // Ajoute l'élément du travail à la galerie dans le modal
         galerieModal.appendChild(elementTravail);
     });
 };
@@ -96,146 +104,211 @@ const afficherTravauxDansModal = (travaux) => {
 // Fonction pour récupérer les travaux depuis le backend
 const recupererTravauxDepuisBackend = async () => {
     try {
-        // Fait une requête fetch pour obtenir les données des travaux depuis le backend
         const reponse = await fetch("http://localhost:5678/api/works", {
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('authToken')}`, // Assurez-vous que le token est inclus si nécessaire
+                'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
             }
         });
 
-        // Convertit la réponse en format JSON
         const travaux = await reponse.json();
-
-        // Appelle la fonction pour afficher les travaux dans le modal
+        works = travaux; // Assignez les travaux récupérés à la variable globale `works`
         afficherTravauxDansModal(travaux);
     } catch (erreur) {
-        // Gère les erreurs en affichant un message dans la console
         console.error("Une erreur s'est produite lors de la récupération des travaux depuis le backend :", erreur);
     }
 };
 
-// Événement DOMContentLoaded
-document.addEventListener("DOMContentLoaded", async function() {
-    // Récupérer la fenêtre modale
-    const modal = document.getElementById("modal");
+// Fonction pour ajouter un projet dynamiquement à la galerie principale
+const ajouterProjetGalerie = (travail) => {
+    const galerie = document.querySelector(".gallery");
 
-    // Récupérer le bouton qui ouvre la fenêtre modale
-    const openModalBtn = document.getElementById("openModalBtn");
+    const elementTravail = document.createElement("div");
+    elementTravail.classList.add("work");
+    elementTravail.dataset.id = travail.id;
 
-    // Afficher la fenêtre modale lorsque l'utilisateur clique sur le bouton "Modifier"
-    openModalBtn.addEventListener("click", function() {
-        modal.style.display = "block";
+    const elementImage = document.createElement("img");
+    elementImage.src = travail.imageUrl;
+    elementImage.alt = travail.title;
+
+    const elementTitre = document.createElement("h3");
+    elementTitre.textContent = travail.title;
+
+    elementTravail.appendChild(elementImage);
+    elementTravail.appendChild(elementTitre);
+    galerie.appendChild(elementTravail);
+
+    ajouterEvenementSuppression(travail.id);
+};
+
+// Gérer la soumission du formulaire d'ajout de photo
+const ajouterEvenementSuppression = (id) => {
+    const elementTravail = document.querySelector(`.work[data-id='${id}']`);
+    if (elementTravail) {
+        const elementCroix = document.createElement("span");
+        elementCroix.innerHTML = "&times;";
+        elementCroix.classList.add("close-icon");
+
+        elementCroix.addEventListener("click", function(event) {
+            event.stopPropagation();
+            const travailId = id;
+            if (travailId) {
+                const confirmation = confirm("ATTENTION : Êtes-vous sûr de vouloir supprimer ce travail ?");
+                if (confirmation) {
+                    supprimerTravail(travailId);
+                }
+            }
+        });
+
+        elementTravail.appendChild(elementCroix);
+    }
+};
+
+// Fonction pour vérifier la validité du formulaire
+const checkFormValidity = () => {
+    const title = document.getElementById('title').value;
+    const category = document.getElementById('category').value;
+    const image = document.getElementById('image-input').files[0];
+    const validerBtn = document.getElementById('valider');
+
+    if (title && category && category !== "" && image) {
+        validerBtn.disabled = false;
+        validerBtn.style.background = "#1D6154";
+    } else {
+        validerBtn.disabled = true;
+        validerBtn.style.background = "#A7A7A7";
+    }
+};
+
+// Fonction pour récupérer les catégories depuis le backend
+const recupererCategories = async () => {
+    try {
+        const response = await fetch("http://localhost:5678/api/categories");
+        if (!response.ok) {
+            throw new Error("Erreur lors de la récupération des catégories");
+        }
+        const categories = await response.json();
+        const categorySelect = document.getElementById("category");
+        categorySelect.innerHTML = '<option value="">Sélectionnez une catégorie</option>';
+
+        categories.forEach(category => {
+            const option = document.createElement("option");
+            option.value = category.id;
+            option.textContent = category.name;
+            categorySelect.appendChild(option);
+        });
+    } catch (error) {
+        console.error("Une erreur s'est produite lors de la récupération des catégories :", error);
+    }
+};
+
+const ouvrirAjouterPhotoModal = async () => {
+    fermerTousLesModals();
+    const modal = document.getElementById("addPhotoModal");
+    modal.style.display = "block";
+
+    document.getElementById('add-photo-button').addEventListener('click', function() {
+        document.getElementById('image-input').click();
     });
 
-    // Récupérer le bouton de fermeture (croix)
-    const closeModalBtn = document.querySelector(".modal .close");
+    const imageInput = document.querySelector("#image-input");
+    const imagePreview = document.getElementById("image-preview");
+    imageInput.addEventListener("change", () => {
+        const file = imageInput.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imagePreview.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+        checkFormValidity();
+    });
 
-    // Fermer la fenêtre modale lorsque l'utilisateur clique sur la croix
+    const closeModalBtn = modal.querySelector(".close");
     closeModalBtn.addEventListener("click", function() {
         modal.style.display = "none";
     });
 
-    // Fermer la fenêtre modale lorsque l'utilisateur clique en dehors de la fenêtre modale
+    const backArrow = modal.querySelector(".arrow");
+    if (backArrow) {
+        backArrow.addEventListener("click", () => {
+            modal.style.display = "none";
+            document.getElementById("modal").style.display = "block";
+        });
+    }
+
+    await recupererCategories();
+    checkFormValidity();
+};
+
+const formulaireAjoutPhoto = document.querySelector("#ajouterPhotoForm");
+formulaireAjoutPhoto.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const title = document.getElementById('title').value;
+    const category = document.getElementById('category').value;
+    const image = document.getElementById('image-input').files[0];
+
+    if (!title || !category || !image) {
+        alert("Tous les champs sont requis.");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("category", category);
+    formData.append("image", image);
+
+    try {
+        const response = await fetch("http://localhost:5678/api/works", {
+            method: "POST",
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+            },
+            body: formData
+        });
+
+        if (response.ok) {
+            const travail = await response.json();
+            ajouterProjetGalerie(travail);
+            works.push(travail);
+            await recupererTravauxDepuisBackend();
+            const modal = document.getElementById("addPhotoModal");
+            modal.style.display = "none";
+            afficherPopupConfirmation("Projet ajouté avec succès!");
+        } else {
+            alert("Erreur lors de l'ajout du projet.");
+        }
+    } catch (error) {
+        console.error("Une erreur s'est produite :", error);
+    }
+});
+
+document.addEventListener("DOMContentLoaded", async function() {
+    const openModalBtn = document.getElementById("openModalBtn");
+    const modal = document.getElementById("modal");
+
+    openModalBtn.addEventListener("click", function() {
+        fermerTousLesModals();
+        modal.style.display = "block";
+    });
+
+    const addPhotoBtn = document.getElementById("addPhotoBtn");
+    addPhotoBtn.addEventListener("click", ouvrirAjouterPhotoModal);
+
+    const closeModalBtn = document.querySelector(".modal .close");
+    closeModalBtn.addEventListener("click", function() {
+        modal.style.display = "none";
+    });
+
     window.addEventListener("click", function(event) {
         if (event.target === modal) {
             modal.style.display = "none";
         }
     });
 
-    // Récupérer les travaux depuis le backend et les afficher dans le modal
+    document.getElementById('title').addEventListener('input', checkFormValidity);
+    document.getElementById('category').addEventListener('change', checkFormValidity);
+    document.getElementById('image-input').addEventListener('change', checkFormValidity);
+
     await recupererTravauxDepuisBackend();
 });
-
-// Étape 3.3 : Envoi d’un nouveau projet au back-end via le formulaire de la modale
-// Fonction pour ouvrir le modal d'ajout de photo
-const ouvrirAjouterPhotoModal = () => {
-    // Récupérer la fenêtre modale
-    const modal = document.getElementById("modal");
-
-    // Modifier le titre du modal
-    modal.querySelector("h4").textContent = "Ajouter une photo";
-
-    // Modifier le contenu du modal pour afficher le formulaire d'ajout de photo
-    const contenuModal = modal.querySelector(".modal-content");
-    contenuModal.innerHTML = `
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <div><img id="arrow" class="arrow" src="assets/icons/fleche.png" alt="arrow"></div>
-        <h4>Ajouter une photo</h4>
-        <form id="ajouterPhotoForm">
-            <div class="upload-container">
-                <div class="image-upload">
-                    <img src="assets/icons/image.png" alt="Image preview">
-                    <label for="image-input" class="image-label" title="+ Ajouter une photo">
-                        <button class="photo" id="add-photo-button">+ Ajouter photo</button>
-                    </label>
-                    <input type="file" id="image-input" accept="image/*" style="display: none;">
-                    <p class="modalp">jpg, png. Taille maximale : 4 Mo.</p>
-                </div>  
-            </div>
-            <button id="valider">Valider</button>
-        </form>
-    </div>
-    `;
-
-    // Ajouter un événement pour le bouton d'ajout de photo
-    document.getElementById('add-photo-button').addEventListener('click', function() {
-        document.getElementById('image-input').click();
-    });
-
-    // Afficher le modal
-    modal.style.display = "block";
-
-    // Gérer la sélection d'une image
-    const imageInput = contenuModal.querySelector("#image-input");
-    imageInput.addEventListener("change", () => {
-        const file = imageInput.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const imagePreview = document.querySelector(".image-upload img");
-                imagePreview.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-
-    // Ajouter un événement de fermeture sur la croix
-    const closeModalBtn = contenuModal.querySelector(".close");
-    closeModalBtn.addEventListener("click", function() {
-        modal.style.display = "none";
-    });
-
-    // Gérer la soumission du formulaire d'ajout de photo
-    const formulaireAjoutPhoto = contenuModal.querySelector("#ajouterPhotoForm");
-    formulaireAjoutPhoto.addEventListener("submit", (event) => {
-        event.preventDefault();
-        // Code pour traiter l'ajout de la photo ici
-    });
-
-    // Vérifier si l'élément de flèche existe avant d'ajouter l'événement
-    const backArrow = contenuModal.querySelector(".arrow");
-    if (backArrow) {
-        // Fonction pour gérer le retour en arrière dans le modal
-        const retourArriereDansModal = () => {
-            // Fermer le modal actuel
-            modal.style.display = "none";
-            console.log(modal.style.display);
-            // Réafficher les travaux dans le modal
-            recupererTravauxDepuisBackend();
-        };
-
-        // Ajouter un événement pour la flèche de retour
-        backArrow.addEventListener("click", retourArriereDansModal);
-    }
-};
-
-// Événement DOMContentLoaded
-document.addEventListener("DOMContentLoaded", async function() {
-    // Récupérer le bouton "Ajouter une photo"
-    const addPhotoBtn = document.getElementById("addPhotoBtn");
-
-    // Ajouter un écouteur d'événement pour ouvrir le modal d'ajout de photo
-    addPhotoBtn.addEventListener("click", ouvrirAjouterPhotoModal);
-});
-

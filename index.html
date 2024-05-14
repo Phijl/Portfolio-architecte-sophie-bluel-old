@@ -14,7 +14,7 @@
     <script type="module" src="modal.js"></script><!-- Ajout du fichier en JavaScript-->
 </head>
 <body>
-    <!-- Fenêtre modale -->
+    <!-- Fenêtre modale pour galerie -->
     <div id="modal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
@@ -26,6 +26,43 @@
             <button class="addPhotoBtn" id="addPhotoBtn">Ajouter une photo</button>
         </div>
     </div>
+    
+    <!-- Fenêtre modale pour ajout de projet -->
+    <div id="addPhotoModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div><img id="arrow" class="arrow" src="assets/icons/fleche.png" alt="arrow"></div>
+            <h4>Ajouter une photo</h4>
+            <form id="ajouterPhotoForm">
+                <div class="upload-container">
+                    <div class="image-upload">
+                        <img id="image-preview" src="assets/icons/image.png" alt="Image preview">
+                        <label for="image-input" class="image-label" title="+ Ajouter une photo">
+                            <button type="button" class="photo" id="add-photo-button">+ Ajouter photo</button>
+                        </label>
+                        <input type="file" id="image-input" accept="image/*" style="display: none;">
+                        <p class="modalp">jpg, png. Taille maximale : 4 Mo.</p>
+                    </div>  
+                </div>
+                <section class="titrecategorie">
+                    <div>
+                        <label for="title">Titre</label>
+                        <input type="text" id="title" name="title" required>
+                    </div>
+                    <div>
+                        <label for="category">Catégorie</label>
+                        <select id="category" name="category" required>
+                            <option value="">Sélectionnez une catégorie</option>
+                            <!-- Catégories dynamiques -->
+                        </select>
+                    </div>
+                </section>
+                <button id="valider" class="addPhotoBtn" disabled>Valider</button>
+            </form>
+            <div id="confirmationPopup" class="confirmation-popup">Projet ajouté avec succès!</div>
+        </div>
+    </div>
+
     <header>
         <a href="index.html">
             <h1>Sophie Bluel <span>Architecte d'intérieur</span></h1>
@@ -60,9 +97,7 @@
             </div>
             <div class="filters"></div>
             <div class="gallery">
-                <!-- Assurez-vous que les éléments de la galerie principale ont un data-id -->
-                <!-- Exemple: <div class="work" data-id="1"> ... </div> -->
-            </div>
+           </div>
         </section>
         <section id="contact">
             <h2>Contact</h2>

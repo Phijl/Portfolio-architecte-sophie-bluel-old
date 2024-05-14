@@ -314,8 +314,9 @@ a {
 	background-color: transparent;
 	border: none;
 	font-weight: bolder;
-
+	cursor: pointer; /* Change le curseur au survol */
 }
+
 .modal {
     display: none; /* Par défaut, la fenêtre modale est cachée */
     position: fixed;
@@ -336,18 +337,30 @@ a {
     width: 80%; /* Largeur de la fenêtre modale */
 }
 
-/* Style pour le bouton de fermeture (croix) */
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
 
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
+ /* Bouton de fermeture */
+ .close {
+	color: #aaa;
+	float: right;
+	font-size: 28px;
+	font-weight: bold;
+  }
+  
+  .close:hover,
+  .close:focus {
+	color: black;
+	text-decoration: none;
+	cursor: pointer;
+  }
+  
+  /* Style pour la croix de suppression des contenus */
+.close-icon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: rgb(0, 0, 0); 
+	color: white;
+    padding: 1px;
     cursor: pointer;
 }
 
@@ -367,7 +380,8 @@ a {
     height: auto; /* Garde le ratio d'aspect */
 }
 
-.addPhotoBtn{
+/* Le bouton de validation */
+.addPhotoBtn {
     font-family: 'Syne';
     font-weight: 700;
     color: white;
@@ -402,31 +416,7 @@ a {
 	width: 80%;
   }
   
-  /* Bouton de fermeture */
-  .close {
-	color: #aaa;
-	float: right;
-	font-size: 28px;
-	font-weight: bold;
-  }
-  
-  .close:hover,
-  .close:focus {
-	color: black;
-	text-decoration: none;
-	cursor: pointer;
-  }
-  
-  /* Style pour la croix de suppression */
-.close-icon {
-    position: absolute;
-    top: 0;
-    right: 0;
-    background-color: rgb(0, 0, 0); 
-	color: white;
-    padding: 1px;
-    cursor: pointer;
-}
+ 
 
 
 /* Style pour le conteneur de l'image et de la croix */
@@ -435,12 +425,7 @@ a {
     display: inline-block;
     overflow: hidden; /* Cache la partie de la croix qui dépasse du conteneur */
 }
-.image-upload{
-	background-color:#E8F1F6;
-	margin: 100px;
-	padding-bottom: 20px;
 
-}
 
 .photo{
 	width: 173px;
@@ -460,14 +445,7 @@ a {
 	border: transparent
 	;
 }
-.modalp{
-font-family: Work Sans;
-font-size: 10px;
-font-weight: 400;
-line-height: 11.73px;
-text-align: center;
 
-}
 .arrow{
 	display: flex;
 	width: 21px;
@@ -485,12 +463,92 @@ text-align: center;
     margin: 0; /* Supprime la marge par défaut */
 }
 
-.openModalBtn {
+/* Conteneur d'upload */
+.upload-container {
     display: flex;
-    align-items: center; /* Centre le contenu du bouton verticalement */
-    background-color: transparent; /* Fond transparent pour le bouton */
-    border: none; /* Supprime la bordure du bouton */
-    cursor: pointer; /* Change le curseur au survol */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%; /* Pour s'assurer que le conteneur prend toute la largeur disponible */
 }
+
+/* Conteneur de l'image et du bouton */
+.image-upload {
+    background-color: #E8F1F6;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+/* L'image de prévisualisation */
+.image-upload img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto 10px auto; /* Centrer horizontalement et ajouter une marge en bas */
+}
+
+/* Le bouton pour ajouter une photo */
+.image-upload label {
+    display: inline-block;
+    width: 173px;
+    height: 36px;
+    border-radius: 50px;
+    background-color: #CBD6DC;
+    color: #306685;
+    text-align: center;
+    line-height: 36px; /* Centrer le texte verticalement */
+    cursor: pointer;
+    position: relative; /* Pour que le bouton soit au-dessus de l'image */
+    margin-bottom: 10px; /* Ajouter une marge en bas pour l'espacement */
+}
+
+.image-upload input[type="file"] {
+    display: none; /* Masquer l'input de fichier réel */
+}
+
+/* Pour le texte sous le bouton */
+.modalp {
+    font-family: Work Sans;
+    font-size: 10px;
+    font-weight: 400;
+    text-align: center;
+    margin-top: 10px;
+}
+
+/* titre et catégorie du modal ajouter une photo*/
+
+.titrecategorie{
+	display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Styles pour le bouton de validation désactivé */
+.addPhotoBtn:disabled {
+    background: #A7A7A7;
+    cursor: not-allowed;
+}
+
+.confirmation-popup {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #1D6154;
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+}
+
+
+
 
 
