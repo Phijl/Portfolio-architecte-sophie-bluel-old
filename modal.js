@@ -138,6 +138,8 @@ const ajouterProjetGalerie = (travail) => {
   galerie.appendChild(elementTravail);
 
   ajouterEvenementSuppression(travail.id);
+  recupererDonnees();
+  afficherTravaux(works);
 };
 
 // Gérer la soumission du formulaire d'ajout de photo
