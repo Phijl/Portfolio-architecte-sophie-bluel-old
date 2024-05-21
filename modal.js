@@ -303,14 +303,16 @@ document.addEventListener("DOMContentLoaded", async function () {
   const addPhotoBtn = document.getElementById("addPhotoBtn");
   addPhotoBtn.addEventListener("click", ouvrirAjouterPhotoModal);
 
-  const closeModalBtn = document.querySelector(".modal .close");
-  closeModalBtn.addEventListener("click", function () {
-    modal.style.display = "none";
+  const closeModalBtns = document.querySelectorAll(".modal .close");
+  closeModalBtns.forEach((btn) => {
+    btn.addEventListener("click", function () {
+      btn.closest(".modal").style.display = "none";
+    });
   });
 
   window.addEventListener("click", function (event) {
-    if (event.target === modal) {
-      modal.style.display = "none";
+    if (event.target.classList.contains("modal")) {
+      event.target.style.display = "none";
     }
   });
 
